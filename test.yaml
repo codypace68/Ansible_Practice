@@ -1,0 +1,21 @@
+- hosts: localhost
+
+  tasks:
+    - name: Check that you can connect (GET) to a page and it returns a status 200
+      uri:
+        url: https://catfact.ninja/breeds
+
+    - name: Run python script to grab all cat breeds on first page and write to file
+      script: /mnt/c/users/codyp/desktop/Ansible_Examples/listCatBreeds.py
+      args:
+        executable: python3
+
+    - name: Copy cat breeds file to Desktop
+      copy:
+        src: /mnt/c/users/codyp/desktop/Ansible_Examples/catBreeds.txt
+        dest: /mnt/c/users/codyp/desktop/catBreedsList.txt
+
+    - name: Push list of cat breeds up to git repo
+      git:
+        repo: https://github.com/codypace68/Ansible_Practice.git
+        dest: /files/catBreedsList.txt
