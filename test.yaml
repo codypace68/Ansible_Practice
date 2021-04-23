@@ -5,17 +5,27 @@
       uri:
         url: https://catfact.ninja/breeds
 
+    - name: Check if catBreeds.txt used by listCatBreeds.py exists
+      stat:
+        path: /mnt/c/users/codyp/desktop/Ansible_Examples/catBreeds.txt
+      register: txtFile
+
+    - name: Create catBreeds.txt if it doesn't exist
+      file: 
+        path: /mnt/c/users/codyp/desktop/Ansible_Examples/catBreeds.txt
+        state: touch
+      when: not txtFile.stat.exists
+
     - name: Run python script to grab all cat breeds on first page and write to file
       script: /mnt/c/users/codyp/desktop/Ansible_Examples/listCatBreeds.py
       args:
         executable: python3
 
-    - name: Copy cat breeds file to Desktop
-      copy:
-        src: /mnt/c/users/codyp/desktop/Ansible_Examples/catBreeds.txt
-        dest: /mnt/c/users/codyp/desktop/catBreedsList.txt
+    - name: Add all files to git 
+      shell: git add *
 
-    - name: Push list of cat breeds up to git repo
-      git:
-        repo: https://github.com/codypace68/Ansible_Practice.git
-        dest: /files/catBreedsList.txt
+    - name: Commit file to local repo
+      shell: git commit -m "Ansible auto-commit"
+
+    - name: Force push repo to master * Note force push is dangerous *
+      shell: git push git@github.com:codypace68/Ansible_Practice.git master --force
